@@ -6,17 +6,12 @@ import (
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v3"
 	"ignis/pkg/builder"
-	. "ignis/pkg/repository"
 	"ignis/pkg/template"
 	"os"
 )
 
 func init() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-}
-
-type Configuration struct {
-	Repositories []Repository `yaml:"repositories"`
 }
 
 func main() {
@@ -45,7 +40,7 @@ func main() {
 		log.Info().Msg("No repositories found in the configuration file")
 		return
 	}
-	err = ignisBuilder.Build(outputDir, config.Repositories)
+	err = ignisBuilder.Build(outputDir, config)
 	if err != nil {
 		log.Info().Err(err)
 		return
@@ -53,8 +48,8 @@ func main() {
 	log.Info().Msg("Successfully generated ignis files.")
 }
 
-func readConfiguration(path string) (config *Configuration, err error) {
-	config = &Configuration{}
+func readConfiguration(path string) (config *builder.Configuration, err error) {
+	config = &builder.Configuration{}
 	fileContent, err := os.ReadFile(path)
 	if err != nil {
 		return
