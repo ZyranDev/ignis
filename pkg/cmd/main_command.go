@@ -4,9 +4,9 @@ import (
 	"flag"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"go.zyran.dev/ignis/pkg/builder"
+	"go.zyran.dev/ignis/pkg/template"
 	"gopkg.in/yaml.v3"
-	"ignis/pkg/builder"
-	"ignis/pkg/template"
 	"os"
 )
 

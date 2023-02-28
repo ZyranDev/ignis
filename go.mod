@@ -1,4 +1,4 @@
-module ignis
+module go.zyran.dev/ignis
 
 go 1.20
 
