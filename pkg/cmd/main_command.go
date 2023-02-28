@@ -54,11 +54,11 @@ func main() {
 }
 
 func readConfiguration(path string) (config *Configuration, err error) {
+	config = &Configuration{}
 	fileContent, err := os.ReadFile(path)
 	if err != nil {
 		return
 	}
-	config = &Configuration{}
 	err = yaml.Unmarshal(fileContent, config)
 	return
 }
