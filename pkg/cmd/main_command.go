@@ -5,8 +5,10 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"go.zyran.dev/ignis/pkg/builder"
+	"go.zyran.dev/ignis/pkg/repository"
 	"go.zyran.dev/ignis/pkg/template"
 	"gopkg.in/yaml.v3"
+	template2 "html/template"
 	"os"
 )
 
@@ -23,23 +25,31 @@ func main() {
 	flag.StringVar(&outputDir, "output", "build", "Output directory path")
 	flag.Parse()
 
-	indexTemplate, err := template.ReadTemplate(indexTemplatePath)
+	config, err := readConfiguration(configPath)
+	if config.Repositories == nil {
+		log.Info().Msg("No repositories found in the configuration file")
+		return
+	}
+
+	getHostFunc := func(funcMap *template2.FuncMap) {
+		(*funcMap)["GetHost"] = func(repo repository.Repository) string {
+			return config.Host
+		}
+	}
+
+	indexTemplate, err := template.ReadTemplate(indexTemplatePath, getHostFunc)
 	if err != nil {
 		log.Info().Err(err)
 		return
 	}
-	repoTemplate, err := template.ReadTemplate(repoTemplatePath)
+	repoTemplate, err := template.ReadTemplate(repoTemplatePath, getHostFunc)
 	if err != nil {
 		log.Info().Err(err)
 		return
 	}
 
 	ignisBuilder := builder.NewBuilder(indexTemplate, repoTemplate)
-	config, err := readConfiguration(configPath)
-	if config.Repositories == nil {
-		log.Info().Msg("No repositories found in the configuration file")
-		return
-	}
+
 	err = ignisBuilder.Build(outputDir, config)
 	if err != nil {
 		log.Info().Err(err)

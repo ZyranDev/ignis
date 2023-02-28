@@ -11,13 +11,17 @@ func ToLower(text string) string {
 	return strings.ToLower(text)
 }
 
-func ReadTemplate(path string) (tmpl *template.Template, err error) {
+func ReadTemplate(path string, modifiers ...func(*template.FuncMap)) (tmpl *template.Template, err error) {
 	fileContent, err := os.ReadFile(path)
 	if err != nil {
 		return
 	}
-	tmpl = template.New(filepath.Base(path)).Funcs(template.FuncMap{
+	funcMap := template.FuncMap{
 		"ToLower": ToLower,
-	})
+	}
+	for _, modifier := range modifiers {
+		modifier(&funcMap)
+	}
+	tmpl = template.New(filepath.Base(path)).Funcs(funcMap)
 	return tmpl.Parse(string(fileContent))
 }
