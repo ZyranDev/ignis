@@ -19,12 +19,8 @@ func (b *Builder) Build(outputDir string, config *Configuration) error {
 	}
 
 	/*Build repositories*/
-	repoDir := filepath.Join(outputDir, "repo")
-	if err := createDirectories(repoDir); err != nil {
-		return err
-	}
 	for _, repo := range config.Repositories {
-		err := WriteTemplate(filepath.Join(repoDir, strings.ToLower(repo.Name)+".html"), b.RepoTemplate, repo)
+		err := WriteTemplate(filepath.Join(outputDir, strings.ToLower(repo.Name)+".html"), b.RepoTemplate, repo)
 		if err != nil {
 			return err
 		}
