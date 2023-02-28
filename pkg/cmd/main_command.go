@@ -25,7 +25,6 @@ func main() {
 	flag.StringVar(&configPath, "config", "config.yml", "Configuration file path")
 	flag.StringVar(&indexTemplatePath, "index", "templates/index.html", "Index template path")
 	flag.StringVar(&repoTemplatePath, "repo", "templates/repository.html", "Repository template path")
-	/*invalid flag usage*/
 	flag.StringVar(&outputDir, "output", "build", "Output directory path")
 	flag.Parse()
 
@@ -39,8 +38,13 @@ func main() {
 		log.Info().Err(err)
 		return
 	}
+
 	ignisBuilder := builder.NewBuilder(indexTemplate, repoTemplate)
 	config, err := readConfiguration(configPath)
+	if config.Repositories == nil {
+		log.Info().Msg("No repositories found in the configuration file")
+		return
+	}
 	err = ignisBuilder.Build(outputDir, config.Repositories)
 	if err != nil {
 		log.Info().Err(err)
